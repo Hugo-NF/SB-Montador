@@ -31,10 +31,6 @@
 *.out
 *.app
 
-# Documents
-/docs/**
-*.pdf
-
 # IDE Files
 /.idea
 /cmake-build-debug
