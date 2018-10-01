@@ -37,12 +37,12 @@ void preprocessor::sections() {
 
 
     if(t_match < 1)
-        message(0, "TokenError: Section TEXT was not declared\n");
+        error("Preprocessor: Section TEXT was not declared\n");
     else
-        cout << "TokenError: Section TEXT was declared more than once. Last seen at line " << this->sec_text.operator*().first << endl;
+        warning("Preprocessor: Section TEXT was declared more than once. Last seen at line %d\n", this->sec_text.operator*().first);
     if(d_match > 1)
-        cout << "TokenError: Section DATA was declared more than once. Last seen at line " << this->sec_data.operator*().first << endl;
+        warning("Preprocessor: Section DATA was declared more than once. Last seen at line %d\n", this->sec_data.operator*().first);
     if(b_match > 1)
-        cout << "TokenError: Section BSS was declared more than once. Last seen at line " << this->sec_bss.operator*().first << endl;
+        warning("Preprocessor: Section BSS was declared more than once. Last seen at line %d\n", this->sec_bss.operator*().first);
 
 }
