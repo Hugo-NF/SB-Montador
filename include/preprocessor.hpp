@@ -6,6 +6,8 @@
 #include <string>
 #include <regex>
 
+#include "console.hpp"
+
 #define COMMENTS_REGEX ";(.*)"
 #define LABEL_REGEX "\w*\s*:"
 #define SEC_TEXT_REGEX "^SECTION TEXT(\n?)$"
@@ -13,6 +15,7 @@
 #define SEC_BSS_REGEX  "^SECTION BSS(\n?)$"
 
 using namespace std;
+using namespace console;
 
 class preprocessor{
 private:

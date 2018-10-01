@@ -1,10 +1,11 @@
 #include <iostream>
-#include <cstdio>
 
+#include "../include/console.hpp"
 #include "../include/ASM_file.hpp"
 #include "../include/preprocessor.hpp"
 
 using namespace std;
+using namespace console;
 
 void print_list(list<pair<int, string>>& mylist){
     list<pair<int,string>>::iterator it;
@@ -13,15 +14,11 @@ void print_list(list<pair<int, string>>& mylist){
     }
 }
 
-#define ANSI_COLOR_RED     "\x1b[31m"
-#define ANSI_COLOR_GREEN   "\x1b[32m"
-#define ANSI_COLOR_YELLOW  "\x1b[33m"
-#define ANSI_COLOR_BLUE    "\x1b[34m"
-#define ANSI_COLOR_MAGENTA "\x1b[35m"
-#define ANSI_COLOR_CYAN    "\x1b[36m"
-#define ANSI_COLOR_RESET   "\x1b[0m"
+int main(int argc, char **argv) {
 
-int main() {
+    message("Imaginary assembler v.0.0.1 (Alpha do alpha)\n");
+    message("Developers:\tHugo N. Fonseca - 16/0008166\n\t\t\tJose Luiz G. Nogueira - 16/0032458\n");
+
     ASM_file input("../docs/exemplo.asm", fstream::in);
 
     list<string> text = input.readfile();

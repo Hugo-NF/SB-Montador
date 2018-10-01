@@ -5,7 +5,10 @@
 #include <fstream>
 #include <list>
 
+#include "console.hpp"
+
 using namespace std;
+using namespace console;
 
 class ASM_file{
 private:
@@ -15,9 +18,9 @@ public:
     explicit ASM_file(const char* filename, fstream::openmode flag){
         file_stream.open(filename, flag);
         if (!file_stream.is_open())
-            cout << "IOError: Could not open file: "<<filename<< endl;
+            error("IOModule: Could not open file %s\n", filename);
         else
-            cout << "FILE: " <<filename<< endl;
+            info("Current file: %s\n", filename);
     }
 
     virtual ~ASM_file(){
