@@ -36,4 +36,5 @@
 *.pdf
 
 # IDE Files
-/.idea 
+/.idea
+/cmake-build-debug
