@@ -8,8 +8,8 @@ string io_file::get_filename() {
     return this->filename;
 }
 
-list<string> io_file::readfile() {
-    list<string> text;
+deque<string> io_file::readfile() {
+    deque<string> text;
     string buffer;
     while(!this->file_stream.eof()){
         getline(this->file_stream, buffer);
@@ -19,11 +19,10 @@ list<string> io_file::readfile() {
     return text;
 }
 
-void io_file::writefile(list<string>& content) {
-    list<string>::iterator it;
+void io_file::writefile(deque<pair<int,string>>& content) {
+    deque<pair<int,string>>::iterator it;
     for(it = content.begin(); it != content.end(); ++it){
-        this->file_stream.write(it.operator*().c_str(), it.operator*().size());
+        this->file_stream.write(it.operator*().second.c_str(), it.operator*().second.size());
         this->file_stream.put('\n');
     }
 }
-

@@ -1,8 +1,7 @@
-#ifndef PREPROCESSOR_HPP
-#define PREPROCESSOR_HPP
+#ifndef MONTADOR_PREPROCESSOR_HPP
+#define MONTADOR_PREPROCESSOR_HPP
 
-#include <iostream>
-#include <list>
+#include <deque>
 #include <string>
 #include <regex>
 
@@ -20,23 +19,30 @@ using namespace console;
 class preprocessor{
 private:
 public:
-    list<pair<int,string>> text;
-    list<pair<int,string>>::iterator text_it, sec_text, sec_data, sec_bss;
+    deque<pair<int, string>> text;
+    deque<regex> sections;
+    deque<regex> symbols;
+    int text_section, data_section, bss_section;
 
-    void sections();
-    void clear_comments();
+    void clear_comments(string& line);
+    void process_file();
 
 public:
-    explicit preprocessor(list<string>& file_text){
-        list<string>::iterator it;
-        int line;
-        for(line  = 1, it = file_text.begin(); it != file_text.end(); line++, ++it){
-            text.emplace_back(line, it.operator*());
+    explicit preprocessor(deque<string>& file_text){
+        text_section = data_section = bss_section = -1;
+        for(int line = 0; line < file_text.size(); line++) {
+            clear_comments(file_text[line]);
+            if(!file_text[line].empty())
+                text.emplace_back(line + 1, file_text[line]);
         }
-    };
+        sections.emplace_back(SEC_TEXT_REGEX, regex::ECMAScript);
+        sections.emplace_back(SEC_DATA_REGEX, regex::ECMAScript);
+        sections.emplace_back(SEC_BSS_REGEX, regex::ECMAScript);
+
+        symbols.emplace_back(LABEL_REGEX, regex::ECMAScript);
+    }
 
     virtual ~preprocessor() = default;
-
 };
 
-#endif //PREPROCESSOR_HPP
+#endif //MONTADOR_PREPROCESSOR_HPP

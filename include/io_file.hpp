@@ -1,9 +1,9 @@
-#ifndef ASM_FILE_HPP
-#define ASM_FILE_HPP
+#ifndef MONTADOR_IO_FILE_HPP
+#define MONTADOR_IO_FILE_HPP
 
 #include <iostream>
 #include <fstream>
-#include <list>
+#include <deque>
 
 #include "console.hpp"
 
@@ -30,9 +30,9 @@ public:
 
     bool is_open();
     string get_filename();
-    list<string> readfile();
-    void writefile(list<string>& content);
+    deque<string> readfile();
+    void writefile(deque<pair<int,string>>& content);
 
 };
 
-#endif //ASM_FILE_HPP
+#endif //MONTADOR_IO_FILE_HPP
