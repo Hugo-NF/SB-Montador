@@ -66,7 +66,7 @@ namespace console{
     }
 
     static void error(const char* msg_fmt,...) {
-        printf(TEXT_COLOR_RED "[ERROR] - ");
+        printf(TEXT_COLOR_RED "[ERROR] ");
         va_list arg_list;
         va_start(arg_list, msg_fmt);
         vprintf(msg_fmt, arg_list);
@@ -75,7 +75,7 @@ namespace console{
     }
 
     static void fatal(const char* msg_fmt,...) {
-        printf(BKGD_COLOR_RED TEXT_BCOLOR_YELLOW "[FATAL] - ");
+        printf(BKGD_COLOR_RED TEXT_BCOLOR_YELLOW "[FATAL] ");
         va_list arg_list;
         va_start(arg_list, msg_fmt);
         vprintf(msg_fmt, arg_list);
@@ -84,7 +84,7 @@ namespace console{
     }
 
     static void info(const char* msg_fmt,...) {
-        printf(TEXT_COLOR_BLUE "[INFO] - ");
+        printf(TEXT_COLOR_BLUE "[INFO] ");
         va_list arg_list;
         va_start(arg_list, msg_fmt);
         vprintf(msg_fmt, arg_list);
@@ -93,7 +93,7 @@ namespace console{
     }
 
     static void warning(const char* msg_fmt,...) {
-        printf(TEXT_BCOLOR_YELLOW "[WARNING] - ");
+        printf(TEXT_BCOLOR_YELLOW "[WARNING] ");
         va_list arg_list;
         va_start(arg_list, msg_fmt);
         vprintf(msg_fmt, arg_list);

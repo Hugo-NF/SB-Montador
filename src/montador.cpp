@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
     windows_cmd();
 #endif
 
-    message("Imaginary assembler v. " VERSION "\n");
+    message("Imaginary assembler - version: " VERSION "\n");
     message("Developers:\tHugo N. Fonseca - 16/0008166\n\t\tJose Luiz G. Nogueira - 16/0032458\n\n");
 
     io_file input_file("../docs/exemplo.asm", fstream::in);
@@ -47,7 +47,12 @@ int main(int argc, char **argv) {
 
     preprocessor pre_file(lines);
 
-    print_list_pair(pre_file.text);
+    io_file output_file("../docs/exemplo.pre", fstream::out);
+    output_file.writefile(pre_file.process_file());
 
+
+    for(auto it = pre_file.labels_addresses.begin(); it != pre_file.labels_addresses.end(); ++it){
+        printf("Key: %s\tValue: %d\n", it.operator*().first.c_str(), it.operator*().second);
+    }
     return 0;
 }
