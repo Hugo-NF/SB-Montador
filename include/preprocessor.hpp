@@ -20,6 +20,7 @@
 
 #define DIR_EQU_REGEX "(.*): EQU (.*)"
 #define DIR_IF_REGEX "^IF (.*)$"
+#define DIR_BEGIN_REGEX "^(.*): BEGIN"
 
 #define SEC_TEXT_REGEX "^(\t|\\s)*SECTION TEXT(\t|\\s)*$"
 #define SEC_DATA_REGEX "^(\t|\\s)*SECTION DATA(\t|\\s)*$"
@@ -39,6 +40,7 @@ private:
     map<string, string> equ_definitions;        // Holds EQUs definitions
     bool if_eval;
 
+    bool is_module(int line);
     bool is_section(int line);
     void clear_line(string& line);
     bool found_section();
@@ -50,11 +52,11 @@ private:
 public:
     int text_section, data_section, bss_section;
     map<string, int> labels_addresses;          // Holds the line for each valid label
+    bool module_def;
 
     explicit preprocessor(deque<string>& file_text){
         text_section = data_section = bss_section = -1;
-        if_eval = false;
-
+        if_eval = module_def = false;
         sections.emplace_back(regex(SEC_TEXT_REGEX, regex::ECMAScript|regex::icase));
         sections.emplace_back(regex(SEC_DATA_REGEX, regex::ECMAScript|regex::icase));
         sections.emplace_back(regex(SEC_BSS_REGEX, regex::ECMAScript|regex::icase));
@@ -70,6 +72,7 @@ public:
 
         directives.emplace_back(regex(DIR_EQU_REGEX, regex::ECMAScript|regex::icase));
         directives.emplace_back(regex(DIR_IF_REGEX, regex::ECMAScript|regex::icase));
+        directives.emplace_back(regex(DIR_BEGIN_REGEX, regex::ECMAScript|regex::icase));
 
         for(int line = 0; line < file_text.size(); line++) {
             clear_line(file_text[line]);
@@ -78,7 +81,15 @@ public:
         }
     }
 
-    virtual ~preprocessor() = default;
+    virtual ~preprocessor(){
+        sections.clear();
+        symbols.clear();
+        formatting.clear();
+        directives.clear();
+        text.clear();
+        equ_definitions.clear();
+        labels_addresses.clear();
+    };
 
     deque<pair<int, string>>& process_file();
 };

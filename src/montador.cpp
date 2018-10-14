@@ -42,17 +42,17 @@ int main(int argc, char **argv) {
     message("Imaginary assembler - version: " VERSION "\n");
     message("Developers:\tHugo N. Fonseca - 16/0008166\n\t\tJose Luiz G. Nogueira - 16/0032458\n\n");
 
-    io_file input_file("../docs/exemplo.asm", fstream::in);
+    io_file input_file("../docs/bin.asm", fstream::in);
     deque<string> lines = input_file.readfile();
 
     preprocessor pre_file(lines);
 
-    io_file output_file("../docs/exemplo.pre", fstream::out);
+    io_file output_file("../docs/bin.pre", fstream::out);
     output_file.writefile(pre_file.process_file());
 
+    input_file.~io_file();
+    output_file.~io_file();
+    pre_file.~preprocessor();
 
-    for(auto it = pre_file.labels_addresses.begin(); it != pre_file.labels_addresses.end(); ++it){
-        printf("Key: %s\tValue: %d\n", it.operator*().first.c_str(), it.operator*().second);
-    }
     return 0;
 }

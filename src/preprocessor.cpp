@@ -1,5 +1,21 @@
 #include "../include/preprocessor.hpp"
 
+bool preprocessor::is_module(int line) {
+    smatch matches;
+    string label;
+    if(regex_search(text[line].second, matches, directives[2])) {
+        label = matches[1].str();
+        if (valid_label(label)){
+            text.erase(text.begin() + line);
+            return true;
+        } else {
+            text.erase(text.begin() + line);
+            error("Preprocessor - lexical: Bad formed token \"%s\" in module identification\n", label.c_str());
+        }
+    }
+    return false;
+}
+
 bool preprocessor::is_section(int line) {
     if(regex_match(text[line].second, sections[0])) {
         if(text_section == -1)
@@ -95,6 +111,7 @@ bool preprocessor::is_if(int line) {
 }
 
 deque<pair<int, string>>& preprocessor::process_file() {
+    module_def = is_module(0);
     int stop = text.size();
     for(int line = 0; line < stop; line++){
         if(is_equ(line)){

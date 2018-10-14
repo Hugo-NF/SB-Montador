@@ -9,7 +9,8 @@ option(_LIGADOR "Compilando o ligador" ON)
 if (_MONTADOR)
     add_executable(montador src/montador.cpp include/console.hpp
             include/io_file.hpp src/io_file.cpp
-            include/preprocessor.hpp src/preprocessor.cpp)
+            include/preprocessor.hpp src/preprocessor.cpp
+            include/assembler.hpp src/assembler.cpp)
 endif()
 
 if (_LIGADOR)
