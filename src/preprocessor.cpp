@@ -46,6 +46,7 @@ void preprocessor::clear_line(string& line) {
     line.assign(regex_replace(line, formatting[1], " "));
     line.assign(regex_replace(line, formatting[2], ""));
     line.assign(regex_replace(line, formatting[3], ":"));
+    line.assign(regex_replace(line, formatting[4], " $1"));
 }
 
 bool preprocessor::found_section() {
@@ -56,20 +57,35 @@ bool preprocessor::valid_label(string& label) {
     return regex_match(label, symbols[0]);
 }
 
-bool preprocessor::has_label(int line){
+int preprocessor::has_label(int line){
     smatch matches;
     string label;
-    string rline;
+    string op_mne;
     if(regex_search(text[line].second, matches, symbols[2])){
         label = matches[1].str();
-        rline = matches[3].str();
-        if(rline.empty())
-            labels_addresses[label] = line+1;
+        op_mne = matches[2].str();
+        if(labels_addresses.count(label) == 0){
+            labels_addresses[label] = code_size;
+            if(op_mne.empty())
+                return 0;
+            else{
+                if(instructions.count(op_mne))
+                    return instructions[op_mne].second;
+                else
+                    error("Preprocessor - syntatic: Instruction mnemonic \"%s\" at line %d does NOT exist.\n", op_mne.c_str(), text[line].first);
+            }
+        }
         else
-            labels_addresses[label] = line;
-        return true;
+            error("Preprocessor - semantic: Label \"%s\" at line %d was redeclared.\n", label.c_str(), text[line].first);
     }
-    return false;
+    else if(regex_search(text[line].second, matches, symbols[3])){
+        op_mne = matches[1].str();
+        if(instructions.count(op_mne))
+            return instructions[op_mne].second;
+        else
+            error("Preprocessor - syntatic: Instruction mnemonic \"%s\" at line %d does NOT exist.\n", op_mne.c_str(), text[line].first);
+    }
+    return 0;
 }
 
 bool preprocessor::is_equ(int line) {
@@ -143,7 +159,7 @@ deque<pair<int, string>>& preprocessor::process_file() {
             }
         }
         else
-            has_label(line);
+            code_size += has_label(line);
     }
     return text;
 }

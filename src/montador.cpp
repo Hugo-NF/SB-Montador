@@ -42,13 +42,14 @@ int main(int argc, char **argv) {
     message("Imaginary assembler - version: " VERSION "\n");
     message("Developers:\tHugo N. Fonseca - 16/0008166\n\t\tJose Luiz G. Nogueira - 16/0032458\n\n");
 
-    io_file input_file("../docs/bin.asm", fstream::in);
+    io_file input_file("../docs/fat_mod_A.asm", fstream::in);
     deque<string> lines = input_file.readfile();
 
     preprocessor pre_file(lines);
 
-    io_file output_file("../docs/bin.pre", fstream::out);
+    io_file output_file("../docs/fat_mod_A.pre", fstream::out);
     output_file.writefile(pre_file.process_file());
+
 
     input_file.~io_file();
     output_file.~io_file();

@@ -10,7 +10,7 @@ if (_MONTADOR)
     add_executable(montador src/montador.cpp include/console.hpp
             include/io_file.hpp src/io_file.cpp
             include/preprocessor.hpp src/preprocessor.cpp
-            include/assembler.hpp src/assembler.cpp)
+            include/assembler.hpp src/assembler.cpp include/tables.hpp)
 endif()
 
 if (_LIGADOR)
