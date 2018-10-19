@@ -25,8 +25,6 @@ public:
 
     deque<tuple<int*, int*, int>> code;
     deque<int> relative;
-    map<string, int> table_use;
-    map<string, int> table_definition;
     bool is_module, proceed;
     int code_size;
 

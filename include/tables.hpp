@@ -36,8 +36,8 @@
 #define LABEL_DIV "(\t|\\s)+:"
 
 #define LABEL_REGEX "^[A-Za-z](\\w+)?$"
-#define NUMBER_REGEX "^[0-9]+$"
-#define LINE_REGEX "^([A-Za-z_](?:\\w)*):(?:\\s|\n)(\\w+)?(?:.*)"
+#define NUMBER_REGEX "^(?:\\s|\t)*([0-9]+)(?:\\s|\t)*"
+#define LINE_REGEX "^([A-Za-z_](?:\\w)*):(?:\\s|\n)(\\w+)?(?:(.*))"
 #define INST_REGEX "^([A-Za-z_](?:\\w)*)(?: (.*))?"
 
 #define DIR_EQU_REGEX "(.*): EQU (.*)"
@@ -51,8 +51,8 @@
 using namespace std;
 
 namespace tables{
-    static  map<string, pair<int, int>> instructions = {{"ADD",    pair<int, int>(1, 2)},   //OPCODES
-                                                        {"SUB",    pair<int, int>(2, 2)}
+    static map<string, pair<int, int>> instructions =   {{"ADD",   pair<int, int>(1, 2)},   //OPCODES
+                                                        {"SUB",    pair<int, int>(2, 2)},
                                                         {"MUL",    pair<int, int>(3, 2)},
                                                         {"DIV",    pair<int, int>(4, 2)},
                                                         {"JMP",    pair<int, int>(5, 2)},
@@ -71,6 +71,8 @@ namespace tables{
                                                         {"PUBLIC", pair<int, int>(23, 0)},
                                                         {"EXTERN", pair<int, int>(24, 0)},
                                                         {"END",    pair<int, int>(25, 0)}};
+
+
 };
 
 #endif //MONTADOR_TABLES_HPP

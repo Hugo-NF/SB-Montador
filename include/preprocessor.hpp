@@ -28,6 +28,7 @@ private:
     bool is_section(int line);
     void clear_line(string& line);
     bool found_section();
+    int valid_number(string& token);
     bool valid_label(string& label);
     int has_label(int line);
     bool is_equ(int line);
@@ -36,6 +37,10 @@ private:
 public:
     int text_section, data_section, bss_section;
     map<string, int> labels_addresses;          // Holds the line for each valid label
+
+    map<string, int> symbols_use;
+    map<string, int> symbols_definition;
+
     bool module_def;
 
     explicit preprocessor(deque<string>& file_text){
@@ -76,6 +81,8 @@ public:
         text.clear();
         equ_definitions.clear();
         labels_addresses.clear();
+        symbols_use.clear();
+        symbols_definition.clear();
     };
 
     deque<pair<int, string>>& process_file();

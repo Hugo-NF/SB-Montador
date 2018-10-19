@@ -53,24 +53,42 @@ bool preprocessor::found_section() {
     return (text_section != -1) || (bss_section != -1) || (data_section != -1);
 }
 
+int preprocessor::valid_number(string& token){
+    smatch m;
+    if(regex_search(token, m, symbols[1]))
+        return stoi(m[0].str());
+    else
+        return 1;
+}
+
 bool preprocessor::valid_label(string& label) {
     return regex_match(label, symbols[0]);
 }
 
 int preprocessor::has_label(int line){
     smatch matches;
-    string label;
-    string op_mne;
+    string label, op_mne, rline;
+    int alloc = 1;
+
     if(regex_search(text[line].second, matches, symbols[2])){
         label = matches[1].str();
         op_mne = matches[2].str();
+        rline = matches[3].str();
+        if(instructions[op_mne].first == INST_EXTERN) {
+            symbols_use[label] = code_size;
+        }
+        else if(instructions[op_mne].first == INST_SPACE){
+            if(!rline.empty())
+                alloc = valid_number(rline);
+        }
+
         if(labels_addresses.count(label) == 0){
             labels_addresses[label] = code_size;
             if(op_mne.empty())
                 return 0;
             else{
                 if(instructions.count(op_mne))
-                    return instructions[op_mne].second;
+                    return alloc * instructions[op_mne].second;
                 else
                     error("Preprocessor - syntatic: Instruction mnemonic \"%s\" at line %d does NOT exist.\n", op_mne.c_str(), text[line].first);
             }
@@ -80,6 +98,10 @@ int preprocessor::has_label(int line){
     }
     else if(regex_search(text[line].second, matches, symbols[3])){
         op_mne = matches[1].str();
+        label = matches[2].str();
+        if(instructions[op_mne].first == INST_PUBLIC){
+            symbols_definition[label] = code_size;
+        }
         if(instructions.count(op_mne))
             return instructions[op_mne].second;
         else
@@ -161,5 +183,8 @@ deque<pair<int, string>>& preprocessor::process_file() {
         else
             code_size += has_label(line);
     }
+    for(auto it = symbols_definition.begin(); it != symbols_definition.end(); ++it)
+        symbols_definition[it.operator*().first] = labels_addresses[it.operator*().first];
+
     return text;
 }
