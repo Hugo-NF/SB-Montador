@@ -17,27 +17,33 @@ bool preprocessor::is_module(int line) {
 }
 
 bool preprocessor::is_section(int line) {
-    if(regex_match(text[line].second, sections[0])) {
-        if(text_section == -1)
-            text_section = line;
+    smatch matches;
+    string sec;
+    if(regex_search(text[line].second, matches, sections)) {
+        sec = matches[1].str();
+        if(regex_match(sec, regex("TEXT", regex::ECMAScript|regex::icase))) {
+            if (text_section != -1)
+                error("Preprocessor - semantic: SECTION TEXT redeclared\n");
+            else
+                text_section = line;
+        }
+        else if(regex_match(sec, regex("DATA", regex::ECMAScript|regex::icase))) {
+            if (data_section != -1)
+                error("Preprocessor - semantic: SECTION DATA redeclared\n");
+            else
+                data_section = line;
+        }
+        else if(regex_match(sec, regex("BSS", regex::ECMAScript|regex::icase))) {
+            if (bss_section != -1)
+                error("Preprocessor - semantic: SECTION BSS redeclared\n");
+            else
+                bss_section = line;
+        }
         else
-            warning("Preprocessor - semantic: SECTION TEXT redeclared. First seen at line %d\n", text[text_section].first);
-    }
-    else if(regex_match(text[line].second, sections[1])) {
-        if(data_section == -1)
-            data_section = line;
-        else
-            warning("Preprocessor - semantic: SECTION DATA redeclared. First seen at line %d\n", text[data_section].first);
-    }
-    else if(regex_match(text[line].second, sections[2])){
-        if(bss_section == -1)
-            bss_section = line;
-        else
-            warning("Preprocessor - semantic: SECTION BSS redeclared. First seen at line %d\n", text[bss_section].first);
+            error("Preprocessor - syntatic: Unknown SECTION definition at line %d\n", text[text_section].first);
     }
     else
         return false;
-
     return true;
 }
 
@@ -55,10 +61,12 @@ bool preprocessor::found_section() {
 
 int preprocessor::valid_number(string& token){
     smatch m;
+    if(equ_definitions.count(token))
+        token = equ_definitions[token];
     if(regex_search(token, m, symbols[1]))
         return stoi(m[0].str());
     else
-        return 1;
+        return -1;
 }
 
 bool preprocessor::valid_label(string& label) {
@@ -68,6 +76,7 @@ bool preprocessor::valid_label(string& label) {
 int preprocessor::has_label(int line){
     smatch matches;
     string label, op_mne, rline;
+    bool is_extern = false, is_data = false;
     int alloc = 1;
 
     if(regex_search(text[line].second, matches, symbols[2])){
@@ -75,26 +84,38 @@ int preprocessor::has_label(int line){
         op_mne = matches[2].str();
         rline = matches[3].str();
         if(instructions[op_mne].first == INST_EXTERN) {
+            is_extern = true;
             symbols_use[label] = code_size;
         }
         else if(instructions[op_mne].first == INST_SPACE){
-            if(!rline.empty())
+            is_data = true;
+            if(!rline.empty()){
+                rline.erase(0, 1);
                 alloc = valid_number(rline);
+                printf("Label: %s\n", label.c_str());
+                if(alloc == -1) {
+                    warning("Preprocessor - syntatic: SPACE directive at line %d using wrong operands. Label %s will not be allocated\n", text[line].first, label.c_str());
+                    alloc = 0;
+                }
+            }
         }
+        else if(instructions[op_mne].first == INST_CONST)
+            is_data = true;
 
         if(labels_addresses.count(label) == 0){
-            labels_addresses[label] = code_size;
             if(op_mne.empty())
                 return 0;
             else{
-                if(instructions.count(op_mne))
+                if(instructions[op_mne] != pair<int, int>(0,0)) {
+                    labels_addresses[label] = make_tuple(code_size, is_data, is_extern);
                     return alloc * instructions[op_mne].second;
+                }
                 else
                     error("Preprocessor - syntatic: Instruction mnemonic \"%s\" at line %d does NOT exist.\n", op_mne.c_str(), text[line].first);
             }
         }
         else
-            error("Preprocessor - semantic: Label \"%s\" at line %d was redeclared.\n", label.c_str(), text[line].first);
+            error("Preprocessor - semantic: Label \"%s\" at line %d was re-declared.\n", label.c_str(), text[line].first);
     }
     else if(regex_search(text[line].second, matches, symbols[3])){
         op_mne = matches[1].str();
@@ -102,11 +123,14 @@ int preprocessor::has_label(int line){
         if(instructions[op_mne].first == INST_PUBLIC){
             symbols_definition[label] = code_size;
         }
-        if(instructions.count(op_mne))
+        if(instructions[op_mne] != pair<int, int>(0,0))
             return instructions[op_mne].second;
+        else if(!op_mne.empty() && label.empty())
+            labels_addresses[op_mne] = make_tuple(code_size, is_data, is_extern);
         else
             error("Preprocessor - syntatic: Instruction mnemonic \"%s\" at line %d does NOT exist.\n", op_mne.c_str(), text[line].first);
     }
+
     return 0;
 }
 
@@ -184,7 +208,7 @@ deque<pair<int, string>>& preprocessor::process_file() {
             code_size += has_label(line);
     }
     for(auto it = symbols_definition.begin(); it != symbols_definition.end(); ++it)
-        symbols_definition[it.operator*().first] = labels_addresses[it.operator*().first];
+        symbols_definition[it.operator*().first] = get<0>(labels_addresses[it.operator*().first]);
 
     return text;
 }

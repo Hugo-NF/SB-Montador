@@ -10,19 +10,17 @@
 
 using namespace std;
 using namespace console;
-using namespace tables;
 
 class preprocessor{
 private:
     deque<pair<int, string>> text;              // Holds the text with it's original line number
 
-    deque<regex> sections;                      // Regular expressions to catalog sections
+    regex sections;                             // Regular expression to catalog sections
     deque<regex> symbols;                       // Regular expressions to catalog symbols
     deque<regex> formatting;                    // Regular expressions to format input file
     deque<regex> directives;                    // Regular expressions to preprocessor directives
-    map<string, string> equ_definitions;        // Holds EQUs definitions
+
     bool if_eval;                               // Flags a true IF directive
-    int code_size;                              // Space needed to load the code
 
     bool is_module(int line);
     bool is_section(int line);
@@ -36,10 +34,12 @@ private:
 
 public:
     int text_section, data_section, bss_section;
-    map<string, int> labels_addresses;          // Holds the line for each valid label
-
+    int code_size;                                                  // Space needed to load the code
+    map<string, tuple<int, bool, bool>> labels_addresses;           // Holds the line for each valid label (addr, data?, extern?)
+    map<string, string> equ_definitions;                            // Holds EQUs definitions
     map<string, int> symbols_use;
     map<string, int> symbols_definition;
+    map<string, pair<int, int>> instructions;
 
     bool module_def;
 
@@ -47,9 +47,7 @@ public:
         text_section = data_section = bss_section = -1;
         if_eval = module_def = false;
         code_size = 0;
-        sections.emplace_back(regex(SEC_TEXT_REGEX, regex::ECMAScript|regex::icase));
-        sections.emplace_back(regex(SEC_DATA_REGEX, regex::ECMAScript|regex::icase));
-        sections.emplace_back(regex(SEC_BSS_REGEX, regex::ECMAScript|regex::icase));
+        sections = regex(SECTION_REGEX, regex::ECMAScript|regex::icase);
 
         symbols.emplace_back(regex(LABEL_REGEX, regex::ECMAScript|regex::icase));
         symbols.emplace_back(regex(NUMBER_REGEX, regex::ECMAScript|regex::icase));
@@ -66,6 +64,27 @@ public:
         directives.emplace_back(regex(DIR_IF_REGEX, regex::ECMAScript|regex::icase));
         directives.emplace_back(regex(DIR_BEGIN_REGEX, regex::ECMAScript|regex::icase));
 
+        instructions["ADD"] = pair<int, int>(1, 2);  //OPCODES
+        instructions["SUB"] = pair<int, int>(2, 2);
+        instructions["MUL"] = pair<int, int>(3, 2);
+        instructions["DIV"] = pair<int, int>(4, 2);
+        instructions["JMP"] = pair<int, int>(5, 2);
+        instructions["JMPN"] = pair<int, int>(6, 2);
+        instructions["JMPP"] = pair<int, int>(7, 2);
+        instructions["JMPZ"] = pair<int, int>(8, 2);
+        instructions["COPY"] = pair<int, int>(9, 3);
+        instructions["LOAD"] = pair<int, int>(10, 2);
+        instructions["STORE"] = pair<int, int>(11, 2);
+        instructions["INPUT"] = pair<int, int>(12, 2);
+        instructions["OUTPUT"] = pair<int, int>(13, 2);
+        instructions["STOP"] = pair<int, int>(14, 1);
+        instructions["CONST"] = pair<int, int>(20, 1);  //Directives
+        instructions["SPACE"] = pair<int, int>(21, 1);
+        instructions["SECTION"] = pair<int, int>(22, 0);
+        instructions["PUBLIC"] = pair<int, int>(23, 0);
+        instructions["EXTERN"] = pair<int, int>(24, 0);
+        instructions["END"] = pair<int, int>(25, 0);
+
         for(int line = 0; line < file_text.size(); line++) {
             clear_line(file_text[line]);
             if(!file_text[line].empty())
@@ -74,7 +93,6 @@ public:
     }
 
     virtual ~preprocessor(){
-        sections.clear();
         symbols.clear();
         formatting.clear();
         directives.clear();

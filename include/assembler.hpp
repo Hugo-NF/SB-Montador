@@ -13,7 +13,6 @@
 
 using namespace std;
 using namespace console;
-using namespace tables;
 
 class assembler{
 private:
@@ -50,7 +49,6 @@ public:
     virtual ~assembler(){
         text.clear();
         labels.clear();
-        instructions.clear();
     }
 };
 

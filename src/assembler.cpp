@@ -56,7 +56,7 @@ void assembler::mount_instruction(int idx_opcode, vector<string>& fields){
     int offset[2] = {0,0};
     int *addr_label[2] = {nullptr, nullptr};
 
-    //code[code_size] = make_tuple(&instructions[opcode].first, &a, b);
+    /*code[code_size] = make_tuple(&instructions[opcode].first, &a, b);
     switch (instructions[opcode].first){
         case INST_ADD:
             if(labels.count(fields[idx_opcode+1])){
@@ -105,6 +105,6 @@ void assembler::mount_instruction(int idx_opcode, vector<string>& fields){
         default:
             error("Assembler - syntatic: Unknown instruction \"%s\"\n", opcode.c_str());
             proceed = false;
-    }
+    }*/
 }
 

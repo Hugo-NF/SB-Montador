@@ -3,7 +3,7 @@ SECTION TEXT
 		INPUT		B
 		INPUT		H
 		LOAD		B
-		MULT		H
+		MUL     	H
 		IF TRIANGULO
 		DIV		DOIS
 		STORE		R
