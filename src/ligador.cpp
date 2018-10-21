@@ -1,40 +1,38 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include <regex>
-#include <vector>
-
-#include "../include/tables.hpp"
+#include "../include/linker.hpp"
 
 using namespace std;
 
 int main(int argc, char **argv){
-    vector<string> lines = {"A_1: ADD N1",
-                            "MOD: EXTERN",
-                            "ADD N1",
-                            "OUTPUT N1 + 1",
-                            "COPY N2 + 2 , N3 + 5",
-                            "STOP",
-                            "_A: CONST -5",
-                            "B: SPACE 4",
-                            "PUBLIC N3",
-                            "MOD: BEGIN",
-                            "END"};
-    cmatch m;
-    regex r(UNIVERSAL_REGEX, regex::ECMAScript);
-    for(int line = 0; line < lines.size(); line++){
-        printf("Line: %s\n", lines[line].c_str());
-        if(regex_search(lines[line].c_str(), m, r)){
-            for(auto it = m.begin(); it != m.end(); it++){
-                printf("Group: %s\n", it.operator*().str().c_str());
-            }
-            printf("\n\n");
-        }
-        else
-            printf("DOES NOT MATCH\n\n");
+    if (argc < 1){
+        error("Invalid number of arguments\n");
+        return -1;
     }
 
+    // Cria linker, ele já irá setas as tabelas e codigos
+    linker linker_obj(argc-1, &argv[1]);
 
+    // Checa se todos os externs foram definidos
+    if ( !linker_obj.is_all_defined() ){
+        return -1;
+    }
+
+    // Checa se algum public foi redefinido
+    if( linker_obj.is_something_redefined() ){
+        return -1;
+    }
+
+    // Ajusta os endereços relativos
+    linker_obj.set_right_address();
+
+    // Substitui endereços externos usados
+    linker_obj.replace_address_exter_used();
+
+    // Exibe a saida
+    linker_obj.puts_code_out();
 
     return 0;
+
 }

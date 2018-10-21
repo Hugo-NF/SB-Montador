@@ -19,6 +19,18 @@ deque<string> io_file::readfile() {
     return text;
 }
 
+string io_file::read_in_string(){
+    string buffer;
+    while(!this->file_stream.eof())
+        buffer += (char) this->file_stream.get();
+    this->file_stream.seekg(0, fstream::beg);
+    return buffer;
+}
+
+void io_file::writeline(string &line) {
+    this->file_stream.write(line.c_str(), line.size());
+}
+
 void io_file::writefile(deque<pair<int,string>>& content) {
     deque<pair<int,string>>::iterator it;
     for(it = content.begin(); it != content.end(); ++it){

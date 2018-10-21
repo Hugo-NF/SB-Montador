@@ -65,6 +65,15 @@ namespace console{
                "Em sistemas Windows:\t ligador myfile.obj ... myfileN.obj\n\n");
     }
 
+    static void sucess(const char* msg_fmt,...){
+        printf(TEXT_COLOR_GREEN "[SUCESS] ");
+        va_list arg_list;
+        va_start(arg_list, msg_fmt);
+        vprintf(msg_fmt, arg_list);
+        va_end(arg_list);
+        printf(RESET);
+    }
+
     static void error(const char* msg_fmt,...) {
         printf(TEXT_COLOR_RED "[ERROR] ");
         va_list arg_list;
