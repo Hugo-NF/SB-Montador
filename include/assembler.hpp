@@ -11,7 +11,7 @@
 #include "console.hpp"
 #include "io_file.hpp"
 #include "preprocessor.hpp"
-#include "tables.hpp"
+#include "defs.hpp"
 
 using namespace std;
 using namespace console;
@@ -25,7 +25,7 @@ public:
     deque<int> code;
     deque<int> relative;
     int current_address;
-    deque<regex> regexes;
+    regex regexes;
     bool proceed, end_found;
 
     bool eval_operator(string& optr);
@@ -43,8 +43,7 @@ public:
             i_file(text),
             out_file("../docs/bin.pre", fstream::out){
 
-        regexes.emplace_back(regex(UNIVERSAL_REGEX, regex::ECMAScript));
-        regexes.emplace_back(regex(LABEL_STA, regex::ECMAScript));
+        regexes = regex(UNIVERSAL_REGEX, regex::ECMAScript);
         out_file.writefile(i_file.process_file());
         proceed = true;
         end_found = false;

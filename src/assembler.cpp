@@ -149,7 +149,7 @@ void assembler::mount_one_arg(int line, bool is_data, const string& op_mne, stri
 void assembler::assemble() {
     smatch matches;
     for(int line = 0; line < this->i_file.text.size(); line++) {
-        if (regex_search(this->i_file.text[line].second, matches, regexes[0])) {
+        if (regex_search(this->i_file.text[line].second, matches, regexes)) {
             string label, op_mne, opr1, optr1, idx1, opr2, optr2, idx2;
             label = matches[1].str();
             op_mne = matches[2].str();

@@ -6,7 +6,7 @@
 #include <regex>
 #include <string>
 #include "console.hpp"
-#include "tables.hpp"
+#include "defs.hpp"
 
 using namespace std;
 using namespace console;
@@ -57,6 +57,7 @@ public:
         formatting.emplace_back(regex(LINE_BEGIN, regex::ECMAScript));
         formatting.emplace_back(regex(LABEL_DIV, regex::ECMAScript));
         formatting.emplace_back(regex(OPR_REGEX, regex::ECMAScript));
+        formatting.emplace_back(regex(HEX_REGEX, regex::ECMAScript));
 
         directives.emplace_back(regex(DIR_EQU_REGEX, regex::ECMAScript|regex::icase));
         directives.emplace_back(regex(DIR_IF_REGEX, regex::ECMAScript|regex::icase));

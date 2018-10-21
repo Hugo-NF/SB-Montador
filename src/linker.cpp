@@ -96,7 +96,7 @@ int linker::is_all_defined() {
     if (name_of_not_defineds.empty()) {
         return 1;
     } else {
-        error("Not defined labels:\n");
+        error("Linker: Not defined labels:\n");
         customize_flags(1, TEXT_COLOR_RED);
         for(auto &label_name : name_of_not_defineds){
             message("\t-> %s\n", label_name.c_str());
@@ -129,7 +129,7 @@ int linker::is_something_redefined(){
     if(name_of_redefined.empty()){
         return 0;
     }else{
-        error("Redefined labels:\n");
+        error("Linker: Redefined labels:\n");
         customize_flags(1, TEXT_COLOR_RED);
         for(auto &label_name : name_of_redefined){
             message("\t-> %s\n", label_name.c_str());

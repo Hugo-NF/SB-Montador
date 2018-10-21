@@ -29,7 +29,7 @@
 #define LINE_BEGIN "^ "
 #define OPR_REGEX "(?:|\t|\\s)*([,+\\-])(?:|\t|\\s)*"
 #define LABEL_DIV "(\t|\\s)+:"
-#define LABEL_STA  "^(?:[A-Za-z_]\\w*):$"
+#define HEX_REGEX "(0x[0-9A-Fa-f]+)"
 
 #define LABEL_REGEX "^[A-Za-z_](\\w+)?$"
 #define NUMBER_REGEX "^(?:\\s|\t)*([0-9]+)(?:\\s|\t)*"

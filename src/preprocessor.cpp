@@ -48,11 +48,16 @@ bool preprocessor::is_section(int line) {
 }
 
 void preprocessor::clear_line(string& line) {
+    smatch m;
     line.assign(regex_replace(line, formatting[0], ""));
     line.assign(regex_replace(line, formatting[1], " "));
     line.assign(regex_replace(line, formatting[2], ""));
     line.assign(regex_replace(line, formatting[3], ":"));
     line.assign(regex_replace(line, formatting[4], " $1"));
+    if(regex_search(line, m, formatting[5])){
+        int num = (int) stoul(m[0].str(), nullptr, 16);
+        line.assign(regex_replace(line, formatting[5], to_string(num)));
+    }
 }
 
 bool preprocessor::found_section() {

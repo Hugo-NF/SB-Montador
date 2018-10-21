@@ -6,8 +6,8 @@
 using namespace std;
 
 int main(int argc, char **argv){
-    if (argc < 1){
-        error("Invalid number of arguments\n");
+    if (argc < 2){
+        fatal("Linker: Invalid number of arguments\n");
         return -1;
     }
 
@@ -15,14 +15,14 @@ int main(int argc, char **argv){
     linker linker_obj(argc-1, &argv[1]);
 
     // Checa se todos os externs foram definidos
-    if ( !linker_obj.is_all_defined() ){
+    if ( !linker_obj.is_all_defined() )
         return -1;
-    }
+
 
     // Checa se algum public foi redefinido
-    if( linker_obj.is_something_redefined() ){
+    if( linker_obj.is_something_redefined() )
         return -1;
-    }
+
 
     // Ajusta os endereços relativos
     linker_obj.set_right_address();

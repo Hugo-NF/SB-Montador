@@ -47,7 +47,7 @@
 using namespace std;
 
 namespace console{
-    static void assembler_help(){
+    static void help(){
         printf("Uso:\n"
                "Em sistemas Unix:\t./montador myfile1.asm ... myfileN.asm\n"
                "Em sistemas Windows:\tmontador myfile.asm ... myfileN.asm\n\n"
@@ -57,12 +57,6 @@ namespace console{
                "-o\t= gerar executável, aka: montar e ligar\n"
                "-c\t= apenas montar (default)\n"
                "-v\t= mostrar versão\n\n");
-    }
-
-    static void linker_help(){
-        printf("Uso:\n"
-               "Em sistemas Unix:\t./ligador myfile1.obj ... myfileN.obj\n"
-               "Em sistemas Windows:\t ligador myfile.obj ... myfileN.obj\n\n");
     }
 
     static void sucess(const char* msg_fmt,...){
