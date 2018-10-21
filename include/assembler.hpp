@@ -2,53 +2,58 @@
 #define MONTADOR_ASSEMBLER_HPP
 
 #include <deque>
+#include <exception>
 #include <map>
 #include <string>
+#include <regex>
 #include <tuple>
 #include <vector>
 #include "console.hpp"
+#include "io_file.hpp"
+#include "preprocessor.hpp"
 #include "tables.hpp"
-
-#define INST_DELIM " ,"
 
 using namespace std;
 using namespace console;
 
-class assembler{
+class assembler {
 private:
 public:
-    deque<pair<int, string>> text;
-    map<string, int> labels;
-    int text_section, data_section, bss_section;
+    preprocessor i_file;
+    io_file out_file;
 
-
-    deque<tuple<int*, int*, int>> code;
+    deque<int> code;
     deque<int> relative;
-    bool is_module, proceed;
-    int code_size;
+    int current_address;
+    deque<regex> regexes;
+    bool proceed;
 
-    static vector<string> split(const string &line, const string &del);
-    void assemble_module();
-    void assemble_exec();
-    void evaluate_line(vector<string>& fields);
-    void mount_instruction(int opcode, vector<string>& fields);
+    bool eval_operator(string& optr);
+    int eval_index(string& idx);
+    int eval_addr(string& opr, int idx, bool check_data);
+    void eval_const(string &amt);
+    void eval_space(string& amt);
+    void eval_one_arg(bool is_data, const string& mne, string& opr, string& optr, string& idx);
+    void eval_copy(int line, bool is_data, const string& op_mne, string& opr1, string& optr1, string& idx1, string& opr2, string& optr2, string& idx2);
+    void mount_one_arg(int line, bool is_data, const string& op_mne, string& opr1, string& optr1, string& idx1, const string& opr2, const string& optr2, const string& idx2);
+    void assemble();
 
 public:
-    explicit assembler(deque<pair<int, string>>& preprocessor_text, map<string, int>& preprocessor_labels, bool is_mod, int s_text, int s_data, int s_bss){
-        text.assign(preprocessor_text.begin(), preprocessor_text.end());
-        labels = preprocessor_labels;
+    explicit assembler(deque<string> &text) :
+            i_file(text),
+            out_file("../docs/bin.pre", fstream::out){
 
+        regexes.emplace_back(regex(UNIVERSAL_REGEX, regex::ECMAScript));
+        regexes.emplace_back(regex(LABEL_STA, regex::ECMAScript));
+        out_file.writefile(i_file.process_file());
         proceed = true;
-        code_size = 0;
-        text_section = s_text;
-        data_section = s_data;
-        bss_section = s_bss;
-        is_module = is_mod;
-
+        current_address = 0;
     }
     virtual ~assembler(){
-        text.clear();
-        labels.clear();
+        i_file.~preprocessor();
+        out_file.~io_file();
+        relative.clear();
+        code.clear();
     }
 };
 

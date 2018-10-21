@@ -83,23 +83,20 @@ int preprocessor::has_label(int line){
         label = matches[1].str();
         op_mne = matches[2].str();
         rline = matches[3].str();
-        if(instructions[op_mne].first == INST_EXTERN) {
+        if(instructions[op_mne].first == DIR_EXTERN)
             is_extern = true;
-            symbols_use[label] = code_size;
-        }
-        else if(instructions[op_mne].first == INST_SPACE){
+        else if(instructions[op_mne].first == DIR_SPACE){
             is_data = true;
             if(!rline.empty()){
                 rline.erase(0, 1);
                 alloc = valid_number(rline);
-                printf("Label: %s\n", label.c_str());
                 if(alloc == -1) {
                     warning("Preprocessor - syntatic: SPACE directive at line %d using wrong operands. Label %s will not be allocated\n", text[line].first, label.c_str());
                     alloc = 0;
                 }
             }
         }
-        else if(instructions[op_mne].first == INST_CONST)
+        else if(instructions[op_mne].first == DIR_CONST)
             is_data = true;
 
         if(labels_addresses.count(label) == 0){
@@ -120,7 +117,7 @@ int preprocessor::has_label(int line){
     else if(regex_search(text[line].second, matches, symbols[3])){
         op_mne = matches[1].str();
         label = matches[2].str();
-        if(instructions[op_mne].first == INST_PUBLIC){
+        if(instructions[op_mne].first == DIR_PUBLIC){
             symbols_definition[label] = code_size;
         }
         if(instructions[op_mne] != pair<int, int>(0,0))
