@@ -15,6 +15,6 @@ endif()
 
 if (_LIGADOR)
     add_executable(ligador src/ligador.cpp include/console.hpp
-            include/io_file.hpp src/io_file.cpp)
+            include/io_file.hpp src/io_file.cpp include/linker.hpp src/linker.cpp)
 endif ()
 

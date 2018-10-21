@@ -1,18 +1,38 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include "../include/linker.hpp"
 
 using namespace std;
 
 int main(int argc, char **argv){
-    map<string, pair<int,int>> a;
-    a["a1"] = pair<int,int>(2,2);
-    printf("%d\n", a["m2"].second);
+    if (argc < 1){
+        error("Invalid number of arguments\n");
+        return -1;
+    }
 
-    /*
-    vector<string> m = assembler::split("STOP", " ,");
-    for (int i = 0; i < m.size(); ++i) {
-        printf("%s\n", m[i].c_str());
-    }*/
+    // Cria linker, ele já irá setas as tabelas e codigos
+    linker linker_obj(argc-1, &argv[1]);
+
+    // Checa se todos os externs foram definidos
+    if ( !linker_obj.is_all_defined() ){
+        return -1;
+    }
+
+    // Checa se algum public foi redefinido
+    if( linker_obj.is_something_redefined() ){
+        return -1;
+    }
+
+    // Ajusta os endereços relativos
+    linker_obj.set_right_address();
+
+    // Substitui endereços externos usados
+    linker_obj.replace_address_exter_used();
+
+    // Exibe a saida
+    linker_obj.puts_code_out();
+
     return 0;
+
 }
