@@ -102,7 +102,7 @@ public:
         symbols_definition.clear();
     }
 
-    deque<pair<int, string>>& process_file();
+    void process_file();
 };
 
 #endif //MONTADOR_PREPROCESSOR_HPP

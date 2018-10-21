@@ -45,6 +45,7 @@ public:
         proceed = true;
         end_found = false;
         current_address = 0;
+        i_file.process_file();
         assemble();
         write_output(filename, gen_pre_out);
     }

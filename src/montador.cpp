@@ -70,7 +70,7 @@ int main(int argc, const char **argv) {
             devs();
 
             for (auto &index : index_files) {
-                io_file input_file(argv[index], fstream::in);
+                io_file input_file((string(argv[index]) + ".asm").c_str(), fstream::in);
                 if (input_file.is_open()) {
                     info("Assembler: Current file = %s\n", argv[index]);
                     deque<string> lines = input_file.readfile();

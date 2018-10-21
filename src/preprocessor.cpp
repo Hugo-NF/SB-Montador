@@ -174,7 +174,7 @@ bool preprocessor::is_if(int line) {
    return false;
 }
 
-deque<pair<int, string>>& preprocessor::process_file() {
+void preprocessor::process_file() {
     module_def = is_module(0);
     int stop = text.size();
     for(int line = 0; line < stop; line++){
@@ -212,5 +212,4 @@ deque<pair<int, string>>& preprocessor::process_file() {
     for(auto it = symbols_definition.begin(); it != symbols_definition.end(); ++it)
         symbols_definition[it.operator*().first] = get<0>(labels_addresses[it.operator*().first]);
 
-    return text;
 }
