@@ -4,8 +4,8 @@ bool io_file::is_open() {
     return this->file_stream.is_open();
 }
 
-string io_file::get_filename() {
-    return this->filename;
+void io_file::close() {
+    this->file_stream.close();
 }
 
 deque<string> io_file::readfile() {
@@ -27,7 +27,7 @@ string io_file::read_in_string(){
     return buffer;
 }
 
-void io_file::writeline(string &line) {
+void io_file::writeline(const string &line) {
     this->file_stream.write(line.c_str(), line.size());
 }
 
@@ -38,3 +38,4 @@ void io_file::writefile(deque<pair<int,string>>& content) {
         this->file_stream.put('\n');
     }
 }
+

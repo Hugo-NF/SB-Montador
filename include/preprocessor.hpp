@@ -6,15 +6,13 @@
 #include <regex>
 #include <string>
 #include "console.hpp"
-#include "tables.hpp"
+#include "defs.hpp"
 
 using namespace std;
 using namespace console;
 
 class preprocessor{
 private:
-    deque<pair<int, string>> text;              // Holds the text with it's original line number
-
     regex sections;                             // Regular expression to catalog sections
     deque<regex> symbols;                       // Regular expressions to catalog symbols
     deque<regex> formatting;                    // Regular expressions to format input file
@@ -33,15 +31,15 @@ private:
     bool is_if(int line);
 
 public:
+    deque<pair<int, string>> text;                                  // Holds the text with it's original line number
     int text_section, data_section, bss_section;
     int code_size;                                                  // Space needed to load the code
+    bool module_def;
     map<string, tuple<int, bool, bool>> labels_addresses;           // Holds the line for each valid label (addr, data?, extern?)
     map<string, string> equ_definitions;                            // Holds EQUs definitions
-    map<string, int> symbols_use;
+    map<string, vector<int>> symbols_use;
     map<string, int> symbols_definition;
     map<string, pair<int, int>> instructions;
-
-    bool module_def;
 
     explicit preprocessor(deque<string>& file_text){
         text_section = data_section = bss_section = -1;
@@ -59,6 +57,7 @@ public:
         formatting.emplace_back(regex(LINE_BEGIN, regex::ECMAScript));
         formatting.emplace_back(regex(LABEL_DIV, regex::ECMAScript));
         formatting.emplace_back(regex(OPR_REGEX, regex::ECMAScript));
+        formatting.emplace_back(regex(HEX_REGEX, regex::ECMAScript));
 
         directives.emplace_back(regex(DIR_EQU_REGEX, regex::ECMAScript|regex::icase));
         directives.emplace_back(regex(DIR_IF_REGEX, regex::ECMAScript|regex::icase));
@@ -101,9 +100,9 @@ public:
         labels_addresses.clear();
         symbols_use.clear();
         symbols_definition.clear();
-    };
+    }
 
-    deque<pair<int, string>>& process_file();
+    void process_file();
 };
 
 #endif //MONTADOR_PREPROCESSOR_HPP

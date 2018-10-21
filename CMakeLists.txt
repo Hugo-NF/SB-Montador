@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.10)
 project(Montador)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -10,7 +10,7 @@ if (_MONTADOR)
     add_executable(montador src/montador.cpp include/console.hpp
             include/io_file.hpp src/io_file.cpp
             include/preprocessor.hpp src/preprocessor.cpp
-            include/assembler.hpp src/assembler.cpp include/tables.hpp)
+            include/assembler.hpp src/assembler.cpp include/defs.hpp)
 endif()
 
 if (_LIGADOR)

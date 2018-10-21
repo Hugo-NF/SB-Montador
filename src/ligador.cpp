@@ -1,3 +1,18 @@
+#ifdef _WIN32
+#include <windows.h>
+#include <wchar.h>
+#ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
+#define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
+#endif
+void windows_cmd(){
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD dwMode = 0;
+    GetConsoleMode(hOut, &dwMode);
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    SetConsoleMode(hOut, dwMode);
+}
+#endif
+
 #include <iostream>
 #include <string>
 #include <map>
@@ -6,8 +21,13 @@
 using namespace std;
 
 int main(int argc, char **argv){
-    if (argc < 1){
-        error("Invalid number of arguments\n");
+#ifdef _WIN32
+    windows_cmd();
+#endif
+    linker_version();
+    devs();
+    if (argc < 2){
+        fatal("Linker: No source files provided. STOP" RESET "\n");
         return -1;
     }
 
@@ -15,14 +35,14 @@ int main(int argc, char **argv){
     linker linker_obj(argc-1, &argv[1]);
 
     // Checa se todos os externs foram definidos
-    if ( !linker_obj.is_all_defined() ){
+    if ( !linker_obj.is_all_defined() )
         return -1;
-    }
+
 
     // Checa se algum public foi redefinido
-    if( linker_obj.is_something_redefined() ){
+    if( linker_obj.is_something_redefined() )
         return -1;
-    }
+
 
     // Ajusta os endereços relativos
     linker_obj.set_right_address();

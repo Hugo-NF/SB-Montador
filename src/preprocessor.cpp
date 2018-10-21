@@ -48,11 +48,16 @@ bool preprocessor::is_section(int line) {
 }
 
 void preprocessor::clear_line(string& line) {
+    smatch m;
     line.assign(regex_replace(line, formatting[0], ""));
     line.assign(regex_replace(line, formatting[1], " "));
     line.assign(regex_replace(line, formatting[2], ""));
     line.assign(regex_replace(line, formatting[3], ":"));
     line.assign(regex_replace(line, formatting[4], " $1"));
+    if(regex_search(line, m, formatting[5])){
+        int num = (int) stoul(m[0].str(), nullptr, 16);
+        line.assign(regex_replace(line, formatting[5], to_string(num)));
+    }
 }
 
 bool preprocessor::found_section() {
@@ -83,23 +88,22 @@ int preprocessor::has_label(int line){
         label = matches[1].str();
         op_mne = matches[2].str();
         rline = matches[3].str();
-        if(instructions[op_mne].first == INST_EXTERN) {
+        if(instructions[op_mne].first == DIR_EXTERN) {
             is_extern = true;
-            symbols_use[label] = code_size;
+            is_data = true;
         }
-        else if(instructions[op_mne].first == INST_SPACE){
+        else if(instructions[op_mne].first == DIR_SPACE){
             is_data = true;
             if(!rline.empty()){
                 rline.erase(0, 1);
                 alloc = valid_number(rline);
-                printf("Label: %s\n", label.c_str());
                 if(alloc == -1) {
                     warning("Preprocessor - syntatic: SPACE directive at line %d using wrong operands. Label %s will not be allocated\n", text[line].first, label.c_str());
                     alloc = 0;
                 }
             }
         }
-        else if(instructions[op_mne].first == INST_CONST)
+        else if(instructions[op_mne].first == DIR_CONST)
             is_data = true;
 
         if(labels_addresses.count(label) == 0){
@@ -120,7 +124,7 @@ int preprocessor::has_label(int line){
     else if(regex_search(text[line].second, matches, symbols[3])){
         op_mne = matches[1].str();
         label = matches[2].str();
-        if(instructions[op_mne].first == INST_PUBLIC){
+        if(instructions[op_mne].first == DIR_PUBLIC){
             symbols_definition[label] = code_size;
         }
         if(instructions[op_mne] != pair<int, int>(0,0))
@@ -172,7 +176,7 @@ bool preprocessor::is_if(int line) {
    return false;
 }
 
-deque<pair<int, string>>& preprocessor::process_file() {
+void preprocessor::process_file() {
     module_def = is_module(0);
     int stop = text.size();
     for(int line = 0; line < stop; line++){
@@ -210,5 +214,4 @@ deque<pair<int, string>>& preprocessor::process_file() {
     for(auto it = symbols_definition.begin(); it != symbols_definition.end(); ++it)
         symbols_definition[it.operator*().first] = get<0>(labels_addresses[it.operator*().first]);
 
-    return text;
 }

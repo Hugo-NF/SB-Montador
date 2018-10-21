@@ -29,55 +29,23 @@ class linker {
  *   code_obj = [codigo, codigo, codigo, ...]
  */
 
+private:
+
     string obj_file;
     deque<deque<tuple<string, int>>> table_use, table_definition;
     deque<deque<int>> relative, code;
     deque<int> code_output;
 
-public:
-    explicit linker(int argc, char** args){
-        get_files(argc, args);
-    }
-
-/**
- * Realiza leitura dos objs
- */
+    /**
+     * Realiza leitura dos objs
+     */
     void get_files(int argc, char** file_names);
 
-/**
- * Pega os campos table_use, table_definition, relative e code
- * de cada obj e armazena em $data
- */
+    /**
+     * Pega os campos table_use, table_definition, relative e code
+     * de cada obj e armazena em $data
+     */
     void add_obj_to_data(string& obj);
-
-/**
- * checa se para cada extern existe algum public
- */
-    int is_all_defined();
-
-/**
- * checa se cada public possui definição unica
- */
-    int is_something_redefined();
-
-/**
- * corrigi enderreço relativo das tables e code
- */
-    void set_right_address();
-
-/**
- * substitui para cada item da tabela de uso no endereço indicado
- * o endereço equivalente da tabela de definição
- */
-    void replace_address_exter_used();
-
-/**
- * uni o array de codigo separado por espaco e joga na saida .e
- */
-    void puts_code_out();
-
-
-private:
 
     /**
      * Quebra a string em vetores onde o delimitador é encontrado
@@ -98,6 +66,38 @@ private:
      * converte um array de tuplas(chave, valor) em um map (chave, valor)
      */
     map<string,int> to_map(deque<tuple<string,int>> &arr_names_and_address);
+
+public:
+    explicit linker(int argc, char** args){
+        get_files(argc, args);
+    }
+
+    /**
+     * checa se para cada extern existe algum public
+     */
+    int is_all_defined();
+
+    /**
+     * checa se cada public possui definição unica
+     */
+    int is_something_redefined();
+
+    /**
+     * corrigi enderreço relativo das tables e code
+     */
+    void set_right_address();
+
+    /**
+     * substitui para cada item da tabela de uso no endereço indicado
+     * o endereço equivalente da tabela de definição
+     */
+    void replace_address_exter_used();
+
+    /**
+     * uni o array de codigo separado por espaco e joga na saida .e
+     */
+    void puts_code_out();
+
 };
 
 #endif //MONTADOR_LINKER_HPP

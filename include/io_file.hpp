@@ -13,26 +13,21 @@ using namespace console;
 class io_file{
 private:
     fstream file_stream;
-    string filename;
 
 public:
     explicit io_file(const char* filename, fstream::openmode flag){
         file_stream.open(filename, flag);
         if (!file_stream.is_open())
             error("IOModule: Could not open file %s\n", filename);
-        else
-            this->filename = string(filename);
+
     }
 
-    virtual ~io_file(){
-        file_stream.close();
-    };
-
+    virtual ~io_file() = default;
     bool is_open();
-    string get_filename();
+    void close();
     string read_in_string();
     deque<string> readfile();
-    void writeline(string& line);
+    void writeline(const string& line);
     void writefile(deque<pair<int,string>>& content);
 
 };

@@ -13,47 +13,83 @@ void windows_cmd(){
 }
 #endif
 
-#include "../include/io_file.hpp"
+#include "../include/assembler.hpp"
 #include "../include/console.hpp"
-#include "../include/preprocessor.hpp"
-
-#define VERSION "0.0.2"
+#include "../include/io_file.hpp"
 
 using namespace std;
 using namespace console;
 
-int main(int argc, char **argv) {
+vector<int> eval_flags(int argc, const char **argv, bool& pre, bool& link, bool& start){
+    vector<int> res;
+    for(int arg = 1; arg < argc; arg++){
+        if(argv[arg][0] != '-')
+            res.push_back(arg);
+        else {
+            if(string(argv[arg]) == FLAG_HELP){
+                help();
+                start = false;
+            }
+            else if(string(argv[arg]) == FLAG_VERSION){
+                asm_version();
+                start = false;
+            }
+            else if(string(argv[arg]) == FLAG_DEV){
+                devs();
+                start = false;
+            }
+            else if(string(argv[arg]) == FLAG_PRE)
+                pre = true;
+            else if(string(argv[arg]) == FLAG_LINK)
+                link = true;
+            else if(string(argv[arg]) == FLAG_MOUNT)
+                link = false;
+            else {
+                fatal("Assembler: Unknown flag option %s" RESET "\n", argv[arg]);
+                start = false;
+            }
+        }
+    }
+    return res;
+}
+
+int main(int argc, const char **argv) {
 #ifdef _WIN32
     windows_cmd();
+    string linker_call = "ligador.exe";
+#else
+    string linker_call = "./ligador";
 #endif
+    bool start = true, flag_pre = false, flag_link = false;
+    if(argc < 2)
+        fatal("Assembler: No arguments provided. STOP" RESET "\n");
+    else {
+        vector<int> index_files = eval_flags(argc, argv, flag_pre, flag_link, start);
+        if (start && !index_files.empty()) {
+            asm_version();
+            devs();
 
-    message("Imaginary assembler - version: " VERSION "\n");
-    message("Developers:\tHugo N. Fonseca - 16/0008166\n\t\tJose Luiz G. Nogueira - 16/0032458\n\n");
-
-    io_file input_file("../docs/fat_mod_A.asm", fstream::in);
-    deque<string> lines = input_file.readfile();
-
-    preprocessor pre_file(lines);
-
-    io_file output_file("../docs/fat_mod_A.pre", fstream::out);
-    output_file.writefile(pre_file.process_file());
-
-    printf("USE\n");
-    for(auto it1 = pre_file.symbols_use.begin(); it1 != pre_file.symbols_use.end(); ++it1){
-        printf("Label: %s\tValue: %d\n", it1.operator*().first.c_str(), it1.operator*().second);
+            for (auto &index : index_files) {
+                io_file input_file((string(argv[index]) + ".asm").c_str(), fstream::in);
+                if (input_file.is_open()) {
+                    info("Assembler: Current file = %s\n", argv[index]);
+                    deque<string> lines = input_file.readfile();
+                    assembler pre_file(lines, argv[index], flag_pre);
+                    if (flag_link)
+                        linker_call += " " + string(argv[index]);
+                }
+                input_file.close();
+            }
+            if (flag_link) {
+                info("Linking your obj files..." RESET "\n");
+                int ret = system(linker_call.c_str());
+                if(ret == 0)
+                    success("All completed\n");
+                else
+                    error("Could not link multiple obj files\n");
+            }
+        }
     }
-    printf("DEF\n");
-    for(auto it2 = pre_file.symbols_definition.begin(); it2 != pre_file.symbols_definition.end(); ++it2){
-        printf("Label: %s\tValue: %d\n", it2.operator*().first.c_str(), it2.operator*().second);
-    }
-    printf("LABELS\n");
-    for(auto it3 = pre_file.labels_addresses.begin(); it3 != pre_file.labels_addresses.end(); ++it3){
-        printf("Label: %s\tValue: %d\nIs_data: %d\tIs_extern: %d\n", it3.operator*().first.c_str(), get<0>(it3.operator*().second), get<1>(it3.operator*().second), get<2>(it3.operator*().second));
-    }
-
-    input_file.~io_file();
-    output_file.~io_file();
-    pre_file.~preprocessor();
 
     return 0;
 }
