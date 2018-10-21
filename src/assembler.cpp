@@ -148,12 +148,18 @@ void assembler::mount_one_arg(int line, bool is_data, const string& op_mne, stri
 
 void assembler::assemble() {
     smatch matches;
-    for(int line = 0; line < this->i_file.text.size(); line++){
-        if(regex_search(this->i_file.text[line].second, matches, regexes[0])){
+    for(int line = 0; line < this->i_file.text.size(); line++) {
+        if (regex_search(this->i_file.text[line].second, matches, regexes[0])) {
             string label, op_mne, opr1, optr1, idx1, opr2, optr2, idx2;
-            label = matches[1].str(); op_mne = matches[2].str(); opr1 = matches[3].str(); optr1 = matches[4].str();
-            idx1 = matches[5].str(); opr2 = matches[6].str(); optr2 = matches[7].str(); idx2 = matches[8].str();
-            switch(i_file.instructions[op_mne].first){
+            label = matches[1].str();
+            op_mne = matches[2].str();
+            opr1 = matches[3].str();
+            optr1 = matches[4].str();
+            idx1 = matches[5].str();
+            opr2 = matches[6].str();
+            optr2 = matches[7].str();
+            idx2 = matches[8].str();
+            switch (i_file.instructions[op_mne].first) {
                 case INST_ADD:
                     mount_one_arg(line, true, op_mne, opr1, optr1, idx1, opr2, optr2, idx2);
                     current_address += 2;
@@ -207,54 +213,52 @@ void assembler::assemble() {
                     current_address += 2;
                     break;
                 case INST_STOP:
+                    if (!i_file.module_def && !end_found)
+                        end_found = true;
+                    else if (end_found)
+                        error("Assembler - semantic: Repeated STOP instruction. Redefinition at line %d\n", this->i_file.text[line].first);
                     code.push_back(i_file.instructions[op_mne].first);
                     current_address++;
                     break;
                 case DIR_CONST:
-                    if(!opr2.empty() || !optr2.empty() || !idx2.empty() || !opr1.empty() || !optr1.empty()) {
+                    if (!opr2.empty() || !optr2.empty() || !idx2.empty() || !opr1.empty() || !optr1.empty()) {
                         proceed = false;
                         error("Assembler - syntatic: Wrong number of arguments to directive %s (line %d)\n", op_mne.c_str(), this->i_file.text[line].first);
-                    }
-                    else
+                    } else
                         eval_const(idx1);
                     break;
                 case DIR_SPACE:
-                    if(!opr2.empty() || !optr2.empty() || !idx2.empty() || !opr1.empty() || !optr1.empty()) {
+                    if (!opr2.empty() || !optr2.empty() || !idx2.empty() || !opr1.empty() || !optr1.empty()) {
                         proceed = false;
                         error("Assembler - syntatic: Wrong number of arguments to directive %s (line %d)\n", op_mne.c_str(), this->i_file.text[line].first);
-                    }
-                    else if(idx1.empty()) {
+                    } else if (idx1.empty()) {
                         idx1 = "1";
                         eval_space(idx1);
-                    }
-                    else
+                    } else
                         eval_space(idx1);
                     break;
                 case DIR_SECTION:
-                    printf("FOUND SECTION\n");
                     break;
                 case DIR_PUBLIC:
-                    printf("FOUND PUBLIC\n");
                     break;
                 case DIR_EXTERN:
-                    printf("FOUND EXTERN\n");
                     break;
                 case DIR_END:
-                    printf("FOUND END\n");
+                    if (i_file.module_def && !end_found)
+                        end_found = true;
+                    else if (end_found)
+                        error("Assembler - semantic: Repeated end module declaration. Redefinition at line %d\n", this->i_file.text[line].first);
                     break;
                 case 0:
                 default:
                     error("Assembler - syntatic: Unknown operation mnemonic at line %d\n", this->i_file.text[line].first);
             }
-        }
-        else if(!regex_match(this->i_file.text[line].second, regexes[1])){
+        } else if (this->i_file.text[line].second.back() != ':') {
             proceed = false;
             error("Unknown ERROR at line %d - standard exception thrown: regex bad logic\n", this->i_file.text[line].first);
         }
-        else
-            proceed = false;
     }
-
+    printf("Proceed: %s\n", proceed?"true":"false");
     printf("\nDEF\n");
     for(auto &mem: i_file.symbols_definition){
         printf("Label: %s\tUsage: %d\n", mem.first.c_str(), mem.second);

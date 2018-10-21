@@ -36,9 +36,7 @@ int main(int argc, char **argv) {
     assembler pre_file(lines);
     pre_file.assemble();
 
-
     input_file.~io_file();
-    pre_file.~assembler();
 
     return 0;
 }

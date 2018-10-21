@@ -26,7 +26,7 @@ public:
     deque<int> relative;
     int current_address;
     deque<regex> regexes;
-    bool proceed;
+    bool proceed, end_found;
 
     bool eval_operator(string& optr);
     int eval_index(string& idx);
@@ -47,10 +47,11 @@ public:
         regexes.emplace_back(regex(LABEL_STA, regex::ECMAScript));
         out_file.writefile(i_file.process_file());
         proceed = true;
+        end_found = false;
         current_address = 0;
     }
     virtual ~assembler(){
-        i_file.~preprocessor();
+        //i_file.~preprocessor();
         out_file.~io_file();
         relative.clear();
         code.clear();
