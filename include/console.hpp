@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <cstdarg>
+#include "defs.hpp"
 
 #define TEXT_COLOR_BLACK   "\x1b[30m"
 #define TEXT_COLOR_RED     "\x1b[31m"
@@ -48,15 +49,24 @@ using namespace std;
 
 namespace console{
     static void help(){
-        printf("Uso:\n"
+        printf("\nUso:\n"
                "Em sistemas Unix:\t./montador myfile1.asm ... myfileN.asm\n"
                "Em sistemas Windows:\tmontador myfile.asm ... myfileN.asm\n\n"
                "Flags disponiveis:\n"
                "-h\t= ver ajuda\n"
                "-pre\t= ver arquivo pre-processado\n"
-               "-o\t= gerar executável, aka: montar e ligar\n"
+               "-o\t= gerar executavel, aka: montar e ligar\n"
                "-c\t= apenas montar (default)\n"
-               "-v\t= mostrar versão\n\n");
+               "-v\t= mostrar versao\n"
+               "-d\t= mostrar desenvolvedores\n\n");
+    }
+
+    static void version(){
+        printf("Imaginary assembler - version: " VERSION "\n");
+    }
+
+    static void devs(){
+        printf("Copyright (C) 2018 All rights reserved.\nAuthors:  Hugo N. Fonseca - 16/0008166\tJose Luiz G. Nogueira - 16/0032458\n");
     }
 
     static void sucess(const char* msg_fmt,...){

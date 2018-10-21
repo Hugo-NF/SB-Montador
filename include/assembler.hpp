@@ -20,7 +20,6 @@ class assembler {
 private:
 public:
     preprocessor i_file;
-    io_file out_file;
 
     deque<int> code;
     deque<int> relative;
@@ -37,21 +36,20 @@ public:
     void eval_copy(int line, bool is_data, const string& op_mne, string& opr1, string& optr1, string& idx1, string& opr2, string& optr2, string& idx2);
     void mount_one_arg(int line, bool is_data, const string& op_mne, string& opr1, string& optr1, string& idx1, const string& opr2, const string& optr2, const string& idx2);
     void assemble();
+    void write_output(const char* filename, bool gen_pre_out);
 
 public:
-    explicit assembler(deque<string> &text) :
-            i_file(text),
-            out_file("../docs/bin.pre", fstream::out){
-
+    explicit assembler(deque<string> &text, const char* filename, bool gen_pre_out) :
+            i_file(text){
         regexes = regex(UNIVERSAL_REGEX, regex::ECMAScript);
-        out_file.writefile(i_file.process_file());
         proceed = true;
         end_found = false;
         current_address = 0;
+        assemble();
+        write_output(filename, gen_pre_out);
     }
     virtual ~assembler(){
         //i_file.~preprocessor();
-        out_file.~io_file();
         relative.clear();
         code.clear();
     }

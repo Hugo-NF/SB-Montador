@@ -1,6 +1,8 @@
 #ifndef MONTADOR_TABLES_HPP
 #define MONTADOR_TABLES_HPP
 
+#define VERSION "0.9.0"
+
 #define INST_ADD        1
 #define INST_SUB        2
 #define INST_MUL        3
@@ -15,12 +17,19 @@
 #define INST_INPUT      12
 #define INST_OUTPUT     13
 #define INST_STOP       14
-#define DIR_CONST      20
-#define DIR_SPACE      21
-#define DIR_SECTION    22
-#define DIR_PUBLIC     23
-#define DIR_EXTERN     24
-#define DIR_END        25
+#define DIR_CONST       20
+#define DIR_SPACE       21
+#define DIR_SECTION     22
+#define DIR_PUBLIC      23
+#define DIR_EXTERN      24
+#define DIR_END         25
+
+#define FLAG_HELP       "-h"
+#define FLAG_VERSION    "-v"
+#define FLAG_DEV        "-d"
+#define FLAG_PRE        "-pre"
+#define FLAG_LINK       "-o"
+#define FLAG_MOUNT      "-c"
 
 #define IF_TRUE_EVAL "1"
 

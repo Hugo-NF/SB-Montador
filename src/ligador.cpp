@@ -7,7 +7,7 @@ using namespace std;
 
 int main(int argc, char **argv){
     if (argc < 2){
-        fatal("Linker: Invalid number of arguments\n");
+        fatal("Linker: No source files provided. STOP\n");
         return -1;
     }
 

@@ -258,25 +258,42 @@ void assembler::assemble() {
             error("Unknown ERROR at line %d - standard exception thrown: regex bad logic\n", this->i_file.text[line].first);
         }
     }
-    printf("Proceed: %s\n", proceed?"true":"false");
-    printf("\nDEF\n");
-    for(auto &mem: i_file.symbols_definition){
-        printf("Label: %s\tUsage: %d\n", mem.first.c_str(), mem.second);
-    }
+}
 
-    printf("\nUSE\n");
-    for(auto &mem: i_file.symbols_use){
-        for(auto &use: mem.second){
-            printf("Label: %s\tUsage: %d\n", mem.first.c_str(), use);
+void assembler::write_output(const char* filename, bool gen_pre_out) {
+    if(gen_pre_out){
+        io_file pre_out_obj((string(filename) + ".pre").c_str(), fstream::out);
+        pre_out_obj.writefile(i_file.text);
+        pre_out_obj.~io_file();
+    }
+    if(proceed){
+        if(i_file.module_def){
+            io_file obj_out((string(filename) + ".obj").c_str(), fstream::out);
+            obj_out.writeline("TABLE USE\n");
+            for(auto &mem: i_file.symbols_use){
+                for(auto &use: mem.second)
+                    obj_out.writeline(mem.first + " " + to_string(use) + "\n");
+
+            }
+            obj_out.writeline("\nTABLE DEFINITION\n");
+            for(auto &mem: i_file.symbols_definition)
+                obj_out.writeline(mem.first + " " + to_string(mem.second) + "\n");
+            obj_out.writeline("\nRELATIVE\n");
+            for(auto &mem: relative)
+                obj_out.writeline(to_string(mem)+" ");
+            obj_out.writeline("\nCODE\n");
+            for(auto &mem: code)
+                obj_out.writeline(to_string(mem)+" ");
+            obj_out.writeline("\n\n");
+            obj_out.~io_file();
         }
-    }
-    printf("\nRELATIVE\n");
-    for(auto &mem: relative){
-        printf("%d\t", mem);
-    }
-    printf("\nCODE\n");
-    for(auto &mem: code){
-        printf("%d ", mem);
-    }
+        else {
+            io_file exec_out_obj((string(filename) + ".e").c_str(), fstream::out);
+            for(auto &mem: code)
+                exec_out_obj.writeline(to_string(mem)+" ");
+            exec_out_obj.~io_file();
+        }
+    } else
+        fatal("Assembler: Synthesis failed\n");
 }
 

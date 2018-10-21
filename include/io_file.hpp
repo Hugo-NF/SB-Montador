@@ -32,7 +32,7 @@ public:
     string get_filename();
     string read_in_string();
     deque<string> readfile();
-    void writeline(string& line);
+    void writeline(const string& line);
     void writefile(deque<pair<int,string>>& content);
 
 };

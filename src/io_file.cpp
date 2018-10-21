@@ -27,7 +27,7 @@ string io_file::read_in_string(){
     return buffer;
 }
 
-void io_file::writeline(string &line) {
+void io_file::writeline(const string &line) {
     this->file_stream.write(line.c_str(), line.size());
 }
 
