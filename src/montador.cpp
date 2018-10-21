@@ -45,7 +45,7 @@ vector<int> eval_flags(int argc, const char **argv, bool& pre, bool& link, bool&
             else if(string(argv[arg]) == FLAG_MOUNT)
                 link = false;
             else {
-                fatal("Assembler: Unknown flag option %s\n", argv[arg]);
+                fatal("Assembler: Unknown flag option %s" RESET "\n", argv[arg]);
                 start = false;
             }
         }
@@ -62,7 +62,7 @@ int main(int argc, const char **argv) {
 #endif
     bool start = true, flag_pre = false, flag_link = false;
     if(argc < 2)
-        fatal("Assembler: No arguments provided. STOP\n");
+        fatal("Assembler: No arguments provided. STOP" RESET "\n");
     else {
         vector<int> index_files = eval_flags(argc, argv, flag_pre, flag_link, start);
         if (start && !index_files.empty()) {

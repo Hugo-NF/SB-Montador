@@ -88,8 +88,10 @@ int preprocessor::has_label(int line){
         label = matches[1].str();
         op_mne = matches[2].str();
         rline = matches[3].str();
-        if(instructions[op_mne].first == DIR_EXTERN)
+        if(instructions[op_mne].first == DIR_EXTERN) {
             is_extern = true;
+            is_data = true;
+        }
         else if(instructions[op_mne].first == DIR_SPACE){
             is_data = true;
             if(!rline.empty()){

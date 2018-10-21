@@ -9,10 +9,11 @@ O projeto consiste em desenvolver um montador e um ligador para o *Assembly* fic
 |Hugo Nascimento Fonseca (@Hugo-NF)|16/0008166|
 |José Luiz Gomes Nogueira (@01oseluiz)|16/0032458|
 
-### 2. Ambiente de desenvolvimento
+### 2. Ambiente e ferramentas de desenvolvimento
 - Linguagem: C++ 14
-- Sistemas operacionais testados: Ubuntu 16.04, Ubuntu 17.10, Windows 10
-- Compiladores: Ubuntu = g++ 5.4.0, Windows =
+- Sistemas operacionais testados: Ubuntu 18.04 (g++ 7.3.0), Windows 10.0.17134.345 (g++ 5.3.0) 
+- CMake: 3.10 ou superior
+- Valgrind: 3.13.0
 
 
 ### 3. Instruções de compilação
@@ -24,12 +25,19 @@ O projeto consiste em desenvolver um montador e um ligador para o *Assembly* fic
 
 ### 4. Utilização e flags disponíveis
 
-    ./montador myfile1.asm myfile2.asm myfileN.asm
-    ./ligador myfile1.obj myfile2.obj myfileN.obj
+    ./montador (optional flags) myfile1 myfile2 ... myfileN
+    ./ligador myfile1 myfile2 ... myfileN
 
 
-- -pre : grava em arquivo a saída do pré-processamento
-- -c : gera o arquivo objeto
-- -o : gera o executável (monta e chama o ligador em seguida)
+- -h    : abre o menu de ajuda
+- -pre  : grava em arquivo a saída do pré-processamento
+- -c    : gera o arquivo objeto
+- -o    : gera o executável (monta e chama o ligador em seguida)
 
 * Por padrão, a montagem ocorre com a opção -c
+* Os arquivos são assumidos com as seguintes extensões:
+    * Código-fonte:     .asm
+    * Pré-processado:   .pre
+    * Código objeto:    .obj
+    * Executável:       .e
+* Os simuladores fornecidos na disciplina estão no diretório /docs

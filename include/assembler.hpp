@@ -29,7 +29,7 @@ public:
 
     bool eval_operator(string& optr);
     int eval_index(string& idx);
-    int eval_addr(string& opr, int idx, bool check_data);
+    int eval_addr(int code_size, string& opr, int idx, bool check_data);
     void eval_const(string &amt);
     void eval_space(string& amt);
     void eval_one_arg(bool is_data, const string& mne, string& opr, string& optr, string& idx);

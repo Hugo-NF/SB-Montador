@@ -18,7 +18,8 @@ int assembler::eval_index(string& idx){
     }
 }
 
-int assembler::eval_addr(string& opr, int idx, bool check_data){
+int assembler::eval_addr(int code_size, string& opr, int idx, bool check_data){
+
     if(i_file.labels_addresses.count(opr)) {
         int addr = get<0>(i_file.labels_addresses[opr]);
         bool is_data = get<1>(i_file.labels_addresses[opr]);
@@ -28,7 +29,7 @@ int assembler::eval_addr(string& opr, int idx, bool check_data){
                 throw invalid_argument("Assembler - semantic: Segmentation fault. Modifying memory address outside data section");
             else{
                 if(is_extern)
-                    i_file.symbols_use[opr].push_back(current_address+1);
+                    i_file.symbols_use[opr].push_back(code_size+1);
                 return addr + idx;
             }
         }
@@ -37,7 +38,7 @@ int assembler::eval_addr(string& opr, int idx, bool check_data){
                 throw invalid_argument("Assembler - semantic: Segmentation fault. Jumping to memory address outside text section");
             else{
                 if(is_extern)
-                    i_file.symbols_use[opr].push_back(current_address+1);
+                    i_file.symbols_use[opr].push_back(code_size+1);
                 return addr + idx;
             }
         }
@@ -82,10 +83,10 @@ void assembler::eval_copy(int line, bool is_data, const string& op_mne, string& 
             offset = eval_index(idx1);
             if(!sum_idx)
                 offset = -offset;
-            addr = eval_addr(opr1, offset, is_data);
+            addr = eval_addr(current_address, opr1, offset, is_data);
         }
         else
-            addr = eval_addr(opr1, 0, is_data);
+            addr = eval_addr(current_address, opr1, 0, is_data);
         code.push_back(get<0>(i_file.instructions[op_mne]));
         code.push_back(addr);
         relative.push_back(current_address+1);
@@ -95,10 +96,10 @@ void assembler::eval_copy(int line, bool is_data, const string& op_mne, string& 
             offset = eval_index(idx2);
             if(!sum_idx)
                 offset = -offset;
-            addr = eval_addr(opr2, offset, is_data);
+            addr = eval_addr(current_address+1, opr2, offset, is_data);
         }
         else
-            addr = eval_addr(opr2, 0, is_data);
+            addr = eval_addr(current_address+1, opr2, 0, is_data);
         code.push_back(addr);
         relative.push_back(current_address+2);
     }
@@ -119,10 +120,10 @@ void assembler::eval_one_arg(bool is_data, const string& mne, string& opr, strin
         offset = eval_index(idx);
         if(!sum_idx)
             offset = -offset;
-        addr = eval_addr(opr, offset, is_data);
+        addr = eval_addr(current_address, opr, offset, is_data);
     }
     else
-        addr = eval_addr(opr, 0, is_data);
+        addr = eval_addr(current_address, opr, 0, is_data);
 
     code.push_back(get<0>(i_file.instructions[mne]));
     code.push_back(addr);
@@ -295,6 +296,6 @@ void assembler::write_output(const char* filename, bool gen_pre_out) {
         }
         success("Assembler: File %s completed with success\n", filename);
     } else
-        fatal("Assembler: Synthesis failed\n");
+        fatal("Assembler: Synthesis failed" RESET "\n");
 }
 

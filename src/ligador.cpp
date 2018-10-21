@@ -27,7 +27,7 @@ int main(int argc, char **argv){
     linker_version();
     devs();
     if (argc < 2){
-        fatal("Linker: No source files provided. STOP\n");
+        fatal("Linker: No source files provided. STOP" RESET "\n");
         return -1;
     }
 

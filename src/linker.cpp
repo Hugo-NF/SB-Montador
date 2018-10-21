@@ -25,12 +25,12 @@ void linker::get_files(int argc, char** file_names){
 void linker::add_obj_to_data(string& obj){
     regex rgx_name_address("([a-zA-Z][a-zA-Z_\\d]*) (\\d+)",regex::ECMAScript);
     regex rgx_address("(\\d+)",regex::ECMAScript);
-    regex rgx_header("(TABLE USE|TABLE DEFINITION|RELATIVE|CODE)\\s",regex::ECMAScript);
+    regex rgx_header("(TABLE USE|TABLE DEFINITION|RELATIVE|CODE)",regex::ECMAScript);
 
     vector<string> groups;
 
     //Remove cabeçalho
-    obj = regex_replace(obj, rgx_header, "");
+    obj = regex_replace(obj, rgx_header, "@");
 
     //Quebra em 4 grupos table_use, table_definition, relative e code
     groups = split(obj, "\n\n");

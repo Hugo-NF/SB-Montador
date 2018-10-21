@@ -1,6 +1,15 @@
 # Prerequisites
 *.d
 
+# IDE Files
+/.idea
+
+# cmake
+/cmake-build-debug
+/CMakeFiles
+*.cmake
+CMakeCache.txt
+
 # Compiled Object files
 *.slo
 *.lo
@@ -32,7 +41,6 @@
 *.exe
 *.out
 *.app
+montador
+ligador
 
-# IDE Files
-/.idea
-/cmake-build-debug
