@@ -78,12 +78,18 @@ int main(int argc, const char **argv) {
                     if (flag_link)
                         linker_call += " " + string(argv[index]);
                 }
-                input_file.~io_file();
+                input_file.close();
             }
-            if (flag_link)
-                return system(linker_call.c_str());
-
+            if (flag_link) {
+                info("Linking your obj files..." RESET "\n");
+                int ret = system(linker_call.c_str());
+                if(ret == 0)
+                    success("All completed\n");
+                else
+                    error("Could not link multiple obj files\n");
+            }
         }
     }
+
     return 0;
 }

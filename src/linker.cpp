@@ -13,7 +13,7 @@ void linker::get_files(int argc, char** file_names){
             count_opened_files += 1;
         }
 
-        file_obj.~io_file();
+        file_obj.close();
     }
 
     // Salva nome do primeiro arquivo, se ele existir
@@ -212,9 +212,9 @@ void linker::puts_code_out(){
 
     io_file file_obj((obj_file + ".e").c_str(), fstream::out);
     file_obj.writeline(output);
-    file_obj.~io_file();
+    file_obj.close();
 
-    success("\n--------> File saved <--------\n\n");
+    success("--> Executable file: %s.e saved\n\n", obj_file.c_str());
 }
 
 vector<string> linker::split(string &line, const string &del) {

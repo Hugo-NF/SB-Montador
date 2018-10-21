@@ -264,7 +264,7 @@ void assembler::write_output(const char* filename, bool gen_pre_out) {
     if(gen_pre_out){
         io_file pre_out_obj((string(filename) + ".pre").c_str(), fstream::out);
         pre_out_obj.writefile(i_file.text);
-        pre_out_obj.~io_file();
+        pre_out_obj.close();
     }
     if(proceed){
         if(i_file.module_def){
@@ -285,13 +285,13 @@ void assembler::write_output(const char* filename, bool gen_pre_out) {
             for(auto &mem: code)
                 obj_out.writeline(to_string(mem)+" ");
             obj_out.writeline("\n\n");
-            obj_out.~io_file();
+            obj_out.close();
         }
         else {
             io_file exec_out_obj((string(filename) + ".e").c_str(), fstream::out);
             for(auto &mem: code)
                 exec_out_obj.writeline(to_string(mem)+" ");
-            exec_out_obj.~io_file();
+            exec_out_obj.close();
         }
         success("Assembler: File %s completed with success\n", filename);
     } else
