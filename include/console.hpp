@@ -61,16 +61,18 @@ namespace console{
                "-d\t= mostrar desenvolvedores\n\n");
     }
 
-    static void version(){
-        printf("Imaginary assembler - version: " VERSION "\n");
+    static void asm_version(){
+        printf("\nImaginary assembler - version: " ASM_VERSION "\n");
     }
-
+    static void linker_version(){
+        printf("\nImaginary linker - version: " LNK_VERSION "\n");
+    }
     static void devs(){
         printf("Copyright (C) 2018 All rights reserved.\nAuthors:  Hugo N. Fonseca - 16/0008166\tJose Luiz G. Nogueira - 16/0032458\n");
     }
 
-    static void sucess(const char* msg_fmt,...){
-        printf(TEXT_COLOR_GREEN "[SUCESS] ");
+    static void success(const char *msg_fmt, ...){
+        printf(TEXT_COLOR_GREEN "[SUCCESS] ");
         va_list arg_list;
         va_start(arg_list, msg_fmt);
         vprintf(msg_fmt, arg_list);

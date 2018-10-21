@@ -281,7 +281,7 @@ void assembler::write_output(const char* filename, bool gen_pre_out) {
             obj_out.writeline("\nRELATIVE\n");
             for(auto &mem: relative)
                 obj_out.writeline(to_string(mem)+" ");
-            obj_out.writeline("\nCODE\n");
+            obj_out.writeline("\n\nCODE\n");
             for(auto &mem: code)
                 obj_out.writeline(to_string(mem)+" ");
             obj_out.writeline("\n\n");
@@ -293,6 +293,7 @@ void assembler::write_output(const char* filename, bool gen_pre_out) {
                 exec_out_obj.writeline(to_string(mem)+" ");
             exec_out_obj.~io_file();
         }
+        success("Assembler: File %s completed with success\n", filename);
     } else
         fatal("Assembler: Synthesis failed\n");
 }

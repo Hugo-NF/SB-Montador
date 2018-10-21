@@ -31,7 +31,7 @@ vector<int> eval_flags(int argc, const char **argv, bool& pre, bool& link, bool&
                 start = false;
             }
             else if(string(argv[arg]) == FLAG_VERSION){
-                version();
+                asm_version();
                 start = false;
             }
             else if(string(argv[arg]) == FLAG_DEV){
@@ -66,7 +66,7 @@ int main(int argc, const char **argv) {
     else {
         vector<int> index_files = eval_flags(argc, argv, flag_pre, flag_link, start);
         if (start && !index_files.empty()) {
-            version();
+            asm_version();
             devs();
 
             for (auto &index : index_files) {
@@ -81,7 +81,7 @@ int main(int argc, const char **argv) {
                 input_file.~io_file();
             }
             if (flag_link)
-                system(linker_call.c_str());
+                return system(linker_call.c_str());
 
         }
     }

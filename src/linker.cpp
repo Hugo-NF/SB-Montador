@@ -5,7 +5,7 @@ void linker::get_files(int argc, char** file_names){
 
     // Abre cada arquivo e salva nas variaveis de classe
     for(int i=0; i < argc; i++){
-        io_file file_obj(file_names[i], fstream::in);
+        io_file file_obj((string(file_names[i]) + ".obj").c_str(), fstream::in);
 
         if(file_obj.is_open()) {
             string str_text = file_obj.read_in_string();
@@ -214,7 +214,7 @@ void linker::puts_code_out(){
     file_obj.writeline(output);
     file_obj.~io_file();
 
-    sucess("\n--------> File saved <--------\n\n");
+    success("\n--------> File saved <--------\n\n");
 }
 
 vector<string> linker::split(string &line, const string &del) {

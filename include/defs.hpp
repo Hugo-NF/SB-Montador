@@ -1,7 +1,8 @@
 #ifndef MONTADOR_TABLES_HPP
 #define MONTADOR_TABLES_HPP
 
-#define VERSION "0.9.0"
+#define ASM_VERSION "0.9.0"
+#define LNK_VERSION "1.0.0"
 
 #define INST_ADD        1
 #define INST_SUB        2

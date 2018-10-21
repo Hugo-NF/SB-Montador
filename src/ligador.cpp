@@ -1,3 +1,18 @@
+#ifdef _WIN32
+#include <windows.h>
+#include <wchar.h>
+#ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
+#define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
+#endif
+void windows_cmd(){
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD dwMode = 0;
+    GetConsoleMode(hOut, &dwMode);
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    SetConsoleMode(hOut, dwMode);
+}
+#endif
+
 #include <iostream>
 #include <string>
 #include <map>
@@ -6,6 +21,11 @@
 using namespace std;
 
 int main(int argc, char **argv){
+#ifdef _WIN32
+    windows_cmd();
+#endif
+    linker_version();
+    devs();
     if (argc < 2){
         fatal("Linker: No source files provided. STOP\n");
         return -1;
